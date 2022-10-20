@@ -1,0 +1,63 @@
+package com.learning.java.todo.service.impl;
+
+import com.learning.java.todo.entity.User;
+import com.learning.java.todo.exception.UserException;
+import com.learning.java.todo.model.UserDto;
+import com.learning.java.todo.repository.UserRepository;
+import com.learning.java.todo.service.UserService;
+import com.learning.java.todo.util.JwtUtil;
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    public String createUser(UserDto userDto) {
+        User user = User.builder().username(userDto.getUsername()).password(passwordEncoder.encode(userDto.getPassword())).build();
+        try {
+            userRepo.save(user);
+            logger.info("User created successfully with username : {}", user.getUsername());
+        }catch (Exception ex){
+            logger.info("Exception while creating user with username : {}", user.getUsername());
+        }
+        return String.format("User Created Successfully with username : %s", user.getUsername()) ;
+    }
+
+    @Override
+    public String updatePassword(String passwordString) {
+        return null;
+    }
+
+    @Override
+    public String authenticate(String username, String password) throws UserException {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+        } catch (Exception ex) {
+            logger.info("Exception while logging in user with username : {}", username);
+            throw new UserException("1001","User authentication failed.");
+        }
+        return jwtUtil.generateToken(username);
+    }
+}
