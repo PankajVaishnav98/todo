@@ -15,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -32,13 +34,15 @@ public class UserServiceImpl implements UserService {
     private JwtUtil jwtUtil;
 
     @Override
-    public String createUser(UserDto userDto) {
+    public String createUser(UserDto userDto) throws UserException {
         User user = User.builder().username(userDto.getUsername()).password(passwordEncoder.encode(userDto.getPassword())).build();
         try {
             userRepo.save(user);
             logger.info("User created successfully with username : {}", user.getUsername());
         }catch (Exception ex){
             logger.info("Exception while creating user with username : {}", user.getUsername());
+            throw new UserException("1001","User creation failed.");
+
         }
         return String.format("User Created Successfully with username : %s", user.getUsername()) ;
     }
@@ -49,6 +53,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String logOut(String token) {
+        Date expirationTime = jwtUtil.setExpiration(token);
+        if(expirationTime.before(new Date())){
+            return "logged out";
+        }
+        else return "failed to log out";
+    }
+
+    @Override
     public String authenticate(String username, String password) throws UserException {
         try {
             authenticationManager.authenticate(
@@ -56,7 +69,7 @@ public class UserServiceImpl implements UserService {
             );
         } catch (Exception ex) {
             logger.info("Exception while logging in user with username : {}", username);
-            throw new UserException("1001","User authentication failed.");
+            throw new UserException("1002","User authentication failed.");
         }
         return jwtUtil.generateToken(username);
     }

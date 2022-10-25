@@ -33,11 +33,11 @@ public class SecurityConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
-        http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll()
+        http.csrf().disable().authorizeRequests().antMatchers("/user/authenticate","/user/register").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        return http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
+        return http.cors().and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     @Bean

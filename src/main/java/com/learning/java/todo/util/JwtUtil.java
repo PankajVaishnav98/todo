@@ -28,6 +28,12 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
+     public Date setExpiration(String token) {
+         final Claims claims = extractAllClaims(token);
+         claims.setExpiration(new Date());
+         return extractClaim(token, Claims::getExpiration);
+     }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -56,4 +62,8 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+
+
+
 }
