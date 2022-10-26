@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface TodoRepository extends JpaRepository<Todo, Long> {
     Optional<List<Todo>> findByUserId(Long userId);
+    Todo findByUserIdAndTitle(Long userId,String title);
 }

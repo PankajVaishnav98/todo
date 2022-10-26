@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +40,13 @@ public class UserServiceImpl implements UserService {
         try {
             userRepo.save(user);
             logger.info("User created successfully with username : {}", user.getUsername());
-        }catch (Exception ex){
+        }catch(DataIntegrityViolationException de){
+            logger.info("Exception while creating user with username : {}", user.getUsername());
+            if(de.getMessage().contains("constraint [user"))
+                throw new UserException("1004",String.format("Username %s already taken",user.getUsername()));
+            throw new UserException("1001","User creation failed.");
+        }
+        catch (Exception ex){
             logger.info("Exception while creating user with username : {}", user.getUsername());
             throw new UserException("1001","User creation failed.");
 

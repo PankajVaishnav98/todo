@@ -32,4 +32,14 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoList());
     }
 
+    @DeleteMapping()
+    public ResponseEntity<String> deleteTodo(@RequestParam("title") String title) throws UserException, TodoException {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(todoService.deleteTodo(title));
+    }
+
+    @PutMapping()
+    public ResponseEntity<String> updateTodo(@RequestBody TodoDto todoDto) throws UserException, TodoException, DateException {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(todoService.updateTodo(todoDto));
+    }
+
 }
