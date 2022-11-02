@@ -12,7 +12,7 @@ public class DateFormatterValidator {
     public static Date validateAndFormatDate(String date) throws DateException {
         Date targetDate;
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm", Locale.ENGLISH);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm", Locale.ENGLISH);
             targetDate = formatter.parse(date);
             if (targetDate.before(new Date())) {
                 throw new DateException("3002", "Target Date can not be a past date.");

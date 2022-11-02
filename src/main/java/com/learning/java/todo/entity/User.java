@@ -21,6 +21,8 @@ public class User {
     @Column(unique=true)
     private String username;
     @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
     private String password;
     @OneToMany(mappedBy = "user")
     private List<Todo> todos;

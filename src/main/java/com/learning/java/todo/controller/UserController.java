@@ -20,7 +20,7 @@ public class UserController {
 
     @PostMapping(value = "/authenticate")
     public ResponseEntity<String> authenticate(@RequestBody AuthRequest authRequest) throws UserException {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.authenticate(authRequest.getUserName(),authRequest.getPassword()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.authenticate(authRequest.getUsername(),authRequest.getPassword()));
     }
 
     @PostMapping(value = "/register")

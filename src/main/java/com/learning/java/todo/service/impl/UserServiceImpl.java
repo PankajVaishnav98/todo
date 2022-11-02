@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String createUser(UserDto userDto) throws UserException {
-        User user = User.builder().username(userDto.getUsername()).password(passwordEncoder.encode(userDto.getPassword())).build();
+        User user = User.builder().username(userDto.getUsername()).email(userDto.getEmail()).password(passwordEncoder.encode(userDto.getPassword())).build();
         try {
             userRepo.save(user);
             logger.info("User created successfully with username : {}", user.getUsername());
